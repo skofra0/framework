@@ -279,7 +279,7 @@ public class BeanPropertySet<T> implements PropertySet<T> {
             if (getClass() != obj.getClass()) {
                 return false;
             }
-            InstanceKey other = (InstanceKey) obj;
+            InstanceKey<?> other = (InstanceKey<?>) obj;
             if (checkNestedDefinitions != other.checkNestedDefinitions) {
                 return false;
             }

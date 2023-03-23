@@ -55,277 +55,253 @@ import elemental.json.impl.JsonUtil;
  */
 public abstract class UIInitHandler extends SynchronizedRequestHandler {
 
-    public static final String BROWSER_DETAILS_PARAMETER = "v-browserDetails";
+	public static final String BROWSER_DETAILS_PARAMETER = "v-browserDetails";
 
-    protected abstract boolean isInitRequest(VaadinRequest request);
+	protected abstract boolean isInitRequest(VaadinRequest request);
 
-    @Override
-    protected boolean canHandleRequest(VaadinRequest request) {
-        return isInitRequest(request);
-    }
+	@Override
+	protected boolean canHandleRequest(VaadinRequest request) {
+		return isInitRequest(request);
+	}
 
-    @Override
-    public boolean synchronizedHandleRequest(VaadinSession session,
-            VaadinRequest request, VaadinResponse response) throws IOException {
-        try {
-            assert UI.getCurrent() == null;
+	@Override
+	public boolean synchronizedHandleRequest(VaadinSession session, VaadinRequest request, VaadinResponse response)
+			throws IOException {
+		try {
+			assert UI.getCurrent() == null;
 
-            // Update browser information from the request
-            session.getBrowser().updateRequestDetails(request);
+			// Update browser information from the request
+			session.getBrowser().updateRequestDetails(request);
 
-            UI uI = getBrowserDetailsUI(request, session);
+			UI uI = getBrowserDetailsUI(request, session);
 
-            session.getCommunicationManager().repaintAll(uI);
+			session.getCommunicationManager().repaintAll(uI);
 
-            JsonObject params = Json.createObject();
-            params.put(UIConstants.UI_ID_PARAMETER, uI.getUIId());
-            String initialUIDL = getInitialUidl(request, uI);
-            params.put("uidl", initialUIDL);
+			JsonObject params = Json.createObject();
+			params.put(UIConstants.UI_ID_PARAMETER, uI.getUIId());
+			String initialUIDL = getInitialUidl(request, uI);
+			params.put("uidl", initialUIDL);
 
-            return commitJsonResponse(request, response,
-                    JsonUtil.stringify(params));
-        } catch (JsonException e) {
-            throw new IOException("Error producing initial UIDL", e);
-        }
-    }
+			return commitJsonResponse(request, response, JsonUtil.stringify(params));
+		} catch (JsonException e) {
+			throw new IOException("Error producing initial UIDL", e);
+		}
+	}
 
-    /**
-     * Commit the JSON response. We can't write immediately to the output stream
-     * as we want to write only a critical notification if something goes wrong
-     * during the response handling.
-     *
-     * @param request
-     *            The request that resulted in this response
-     * @param response
-     *            The response to write to
-     * @param json
-     *            The JSON to write
-     * @return true if the JSON was written successfully, false otherwise
-     * @throws IOException
-     *             If there was an exception while writing to the output
-     */
-    static boolean commitJsonResponse(VaadinRequest request,
-            VaadinResponse response, String json) throws IOException {
-        // The response was produced without errors so write it to the client
-        response.setContentType(JsonConstants.JSON_CONTENT_TYPE);
+	/**
+	 * Commit the JSON response. We can't write immediately to the output stream as
+	 * we want to write only a critical notification if something goes wrong during
+	 * the response handling.
+	 *
+	 * @param request  The request that resulted in this response
+	 * @param response The response to write to
+	 * @param json     The JSON to write
+	 * @return true if the JSON was written successfully, false otherwise
+	 * @throws IOException If there was an exception while writing to the output
+	 */
+	static boolean commitJsonResponse(VaadinRequest request, VaadinResponse response, String json) throws IOException {
+		// The response was produced without errors so write it to the client
+		response.setContentType(JsonConstants.JSON_CONTENT_TYPE);
 
-        // Response might contain sensitive information, so prevent all forms of
-        // caching
-        response.setNoCacheHeaders();
+		// Response might contain sensitive information, so prevent all forms of
+		// caching
+		response.setNoCacheHeaders();
 
-        byte[] b = json.getBytes(UTF_8);
-        response.setContentLength(b.length);
+		byte[] b = json.getBytes(UTF_8);
+		response.setContentLength(b.length);
 
-        OutputStream outputStream = response.getOutputStream();
-        outputStream.write(b);
-        // NOTE GateIn requires the buffers to be flushed to work
-        outputStream.flush();
+		OutputStream outputStream = response.getOutputStream();
+		outputStream.write(b);
+		// NOTE GateIn requires the buffers to be flushed to work
+		outputStream.flush();
 
-        return true;
-    }
+		return true;
+	}
 
-    private UI getBrowserDetailsUI(VaadinRequest request,
-            VaadinSession session) {
-        VaadinService vaadinService = request.getService();
+	private UI getBrowserDetailsUI(VaadinRequest request, VaadinSession session) {
+		VaadinService vaadinService = request.getService();
 
-        List<UIProvider> uiProviders = session.getUIProviders();
+		List<UIProvider> uiProviders = session.getUIProviders();
 
-        UIClassSelectionEvent classSelectionEvent = new UIClassSelectionEvent(
-                request);
+		UIClassSelectionEvent classSelectionEvent = new UIClassSelectionEvent(request);
 
-        UIProvider provider = null;
-        Class<? extends UI> uiClass = null;
-        for (UIProvider p : uiProviders) {
-            // Check for existing LegacyWindow
-            if (p instanceof LegacyApplicationUIProvider) {
-                LegacyApplicationUIProvider legacyProvider = (LegacyApplicationUIProvider) p;
+		UIProvider provider = null;
+		Class<? extends UI> uiClass = null;
+		for (UIProvider p : uiProviders) {
+			// Check for existing LegacyWindow
+			if (p instanceof LegacyApplicationUIProvider) {
+				LegacyApplicationUIProvider legacyProvider = (LegacyApplicationUIProvider) p;
 
-                UI existingUi = legacyProvider
-                        .getExistingUI(classSelectionEvent);
-                if (existingUi != null) {
-                    reinitUI(existingUi, request);
-                    return existingUi;
-                }
-            }
+				UI existingUi = legacyProvider.getExistingUI(classSelectionEvent);
+				if (existingUi != null) {
+					reinitUI(existingUi, request);
+					return existingUi;
+				}
+			}
 
-            uiClass = p.getUIClass(classSelectionEvent);
-            if (uiClass != null) {
-                provider = p;
-                break;
-            }
-        }
+			uiClass = p.getUIClass(classSelectionEvent);
+			if (uiClass != null) {
+				provider = p;
+				break;
+			}
+		}
 
-        if (provider == null || uiClass == null) {
-            return null;
-        }
+		if (provider == null || uiClass == null) {
+			return null;
+		}
 
-        // Check for an existing UI based on embed id
+		// Check for an existing UI based on embed id
 
-        String embedId = getEmbedId(request);
+		String embedId = getEmbedId(request);
 
-        UI retainedUI = session.getUIByEmbedId(embedId);
-        if (retainedUI != null) {
-            if (vaadinService.preserveUIOnRefresh(provider,
-                    new UICreateEvent(request, uiClass))) {
-                if (uiClass.isInstance(retainedUI)) {
-                    reinitUI(retainedUI, request);
-                    return retainedUI;
-                } else {
-                    getLogger().info("Not using the preserved UI " + embedId
-                            + " because it is of type " + retainedUI.getClass()
-                            + " but " + uiClass
-                            + " is expected for the request.");
-                }
-            }
-            /*
-             * Previous UI without preserve on refresh will be closed when the
-             * new UI gets added to the session.
-             */
-        }
+		UI retainedUI = session.getUIByEmbedId(embedId);
+		if (retainedUI != null) {
+			if (vaadinService.preserveUIOnRefresh(provider, new UICreateEvent(request, uiClass))) {
+				if (uiClass.isInstance(retainedUI)) {
+					reinitUI(retainedUI, request);
+					return retainedUI;
+				} else {
+					getLogger().info("Not using the preserved UI " + embedId + " because it is of type "
+							+ retainedUI.getClass() + " but " + uiClass + " is expected for the request.");
+				}
+			}
+			/*
+			 * Previous UI without preserve on refresh will be closed when the new UI gets
+			 * added to the session.
+			 */
+		}
 
-        // No existing UI found - go on by creating and initializing one
+		// No existing UI found - go on by creating and initializing one
 
-        Integer uiId = Integer.valueOf(session.getNextUIid());
+		Integer uiId = Integer.valueOf(session.getNextUIid());
 
-        // Explicit Class.cast to detect if the UIProvider does something
-        // unexpected
-        UICreateEvent event = new UICreateEvent(request, uiClass, uiId);
-        UI ui = uiClass.cast(provider.createInstance(event));
+		// Explicit Class.cast to detect if the UIProvider does something
+		// unexpected
+		UICreateEvent event = new UICreateEvent(request, uiClass, uiId);
+		UI ui = uiClass.cast(provider.createInstance(event));
 
-        // Initialize some fields for a newly created UI
-        if (ui.getSession() != session) {
-            // Session already set for LegacyWindow
-            ui.setSession(session);
-        }
+		// Initialize some fields for a newly created UI
+		if (ui.getSession() != session) {
+			// Session already set for LegacyWindow
+			ui.setSession(session);
+		}
 
-        PushMode pushMode = provider.getPushMode(event);
-        if (pushMode == null) {
-            pushMode = session.getService().getDeploymentConfiguration()
-                    .getPushMode();
-        }
-        ui.getPushConfiguration().setPushMode(pushMode);
+		PushMode pushMode = provider.getPushMode(event);
+		if (pushMode == null) {
+			pushMode = session.getService().getDeploymentConfiguration().getPushMode();
+		}
+		ui.getPushConfiguration().setPushMode(pushMode);
 
-        Transport transport = provider.getPushTransport(event);
-        if (transport != null) {
-            ui.getPushConfiguration().setTransport(transport);
-        }
+		Transport transport = provider.getPushTransport(event);
+		if (transport != null) {
+			ui.getPushConfiguration().setTransport(transport);
+		}
 
-        // Set thread local here so it is available in init
-        UI.setCurrent(ui);
+		// Set thread local here so it is available in init
+		UI.setCurrent(ui);
 
-        Exception initException = null;
-        try {
-            ui.doInit(request, uiId.intValue(), embedId);
-        } catch (Exception e) {
-            initException = e;
-        }
-        session.addUI(ui);
-        if (initException != null) {
-            ui.getSession().getCommunicationManager()
-                    .handleConnectorRelatedException(ui, initException);
-        }
-        // Warn if the window can't be preserved
-        if (embedId == null
-                && vaadinService.preserveUIOnRefresh(provider, event)) {
-            getLogger().warning("There is no embed id available for UI "
-                    + uiClass + " that should be preserved.");
-        }
+		Exception initException = null;
+		try {
+			ui.doInit(request, uiId.intValue(), embedId);
+		} catch (Exception e) {
+			initException = e;
+		}
+		session.addUI(ui);
+		if (initException != null) {
+			ui.getSession().getCommunicationManager().handleConnectorRelatedException(ui, initException);
+		}
+		// Warn if the window can't be preserved
+		if (embedId == null && vaadinService.preserveUIOnRefresh(provider, event)) {
+			getLogger().warning("There is no embed id available for UI " + uiClass + " that should be preserved.");
+		}
 
-        return ui;
-    }
+		return ui;
+	}
 
-    /**
-     * Constructs an embed id based on information in the request.
-     *
-     * @since 7.2
-     *
-     * @param request
-     *            the request to get embed information from
-     * @return the embed id, or <code>null</code> if id is not available.
-     *
-     * @see UI#getEmbedId()
-     */
-    protected String getEmbedId(VaadinRequest request) {
-        // Parameters sent by vaadinBootstrap.js
-        String windowName = request.getParameter("v-wn");
-        String appId = request.getParameter("v-appId");
+	/**
+	 * Constructs an embed id based on information in the request.
+	 *
+	 * @since 7.2
+	 *
+	 * @param request the request to get embed information from
+	 * @return the embed id, or <code>null</code> if id is not available.
+	 *
+	 * @see UI#getEmbedId()
+	 */
+	protected String getEmbedId(VaadinRequest request) {
+		// Parameters sent by vaadinBootstrap.js
+		String windowName = request.getParameter("v-wn");
+		String appId = request.getParameter("v-appId");
 
-        if (windowName != null && appId != null) {
-            return windowName + '.' + appId;
-        } else {
-            return null;
-        }
-    }
+		if (windowName != null && appId != null) {
+			return windowName + '.' + appId;
+		} else {
+			return null;
+		}
+	}
 
-    /**
-     * Updates a UI that has already been initialized but is now loaded again,
-     * e.g. because of {@link PreserveOnRefresh}.
-     *
-     * @param ui
-     * @param request
-     */
-    private void reinitUI(UI ui, VaadinRequest request) {
-        UI.setCurrent(ui);
-        ui.doRefresh(request);
-    }
+	/**
+	 * Updates a UI that has already been initialized but is now loaded again, e.g.
+	 * because of {@link PreserveOnRefresh}.
+	 *
+	 * @param ui
+	 * @param request
+	 */
+	private void reinitUI(UI ui, VaadinRequest request) {
+		UI.setCurrent(ui);
+		ui.doRefresh(request);
+	}
 
-    /**
-     * Generates the initial UIDL message that can e.g. be included in a html
-     * page to avoid a separate round trip just for getting the UIDL.
-     *
-     * @param request
-     *            the request that caused the initialization
-     * @param uI
-     *            the UI for which the UIDL should be generated
-     * @return a string with the initial UIDL message
-     * @throws IOException
-     */
-    protected String getInitialUidl(VaadinRequest request, UI uI)
-            throws IOException {
-        try (StringWriter writer = new StringWriter()) {
-            writer.write("{");
+	/**
+	 * Generates the initial UIDL message that can e.g. be included in a html page
+	 * to avoid a separate round trip just for getting the UIDL.
+	 *
+	 * @param request the request that caused the initialization
+	 * @param uI      the UI for which the UIDL should be generated
+	 * @return a string with the initial UIDL message
+	 * @throws IOException
+	 */
+	protected String getInitialUidl(VaadinRequest request, UI uI) throws IOException {
+		try (StringWriter writer = new StringWriter()) {
+			writer.write("{");
 
-            VaadinSession session = uI.getSession();
-            if (session.getConfiguration().isXsrfProtectionEnabled()) {
-                writer.write(getSecurityKeyUIDL(session));
-            }
-            writer.write(getPushIdUIDL(session));
-            new UidlWriter().write(uI, writer, false);
-            writer.write("}");
+			VaadinSession session = uI.getSession();
+			if (session.getConfiguration().isXsrfProtectionEnabled()) {
+				writer.write(getSecurityKeyUIDL(session));
+			}
+			writer.write(getPushIdUIDL(session));
+			new UidlWriter().write(uI, writer, false);
+			writer.write("}");
 
-            String initialUIDL = writer.toString();
-            getLogger().log(Level.FINE, "Initial UIDL:" + initialUIDL);
-            return initialUIDL;
-        }
-    }
+			String initialUIDL = writer.toString();
+			getLogger().log(Level.FINE, "Initial UIDL:" + initialUIDL);
+			return initialUIDL;
+		}
+	}
 
-    /**
-     * Gets the security key (and generates one if needed) as UIDL.
-     *
-     * @param session
-     *            the vaadin session to which the security key belongs
-     * @return the security key UIDL or "" if the feature is turned off
-     */
-    private static String getSecurityKeyUIDL(VaadinSession session) {
-        String seckey = session.getCsrfToken();
+	/**
+	 * Gets the security key (and generates one if needed) as UIDL.
+	 *
+	 * @param session the vaadin session to which the security key belongs
+	 * @return the security key UIDL or "" if the feature is turned off
+	 */
+	private static String getSecurityKeyUIDL(VaadinSession session) {
+		String seckey = session.getCsrfToken();
 
-        return "\"" + ApplicationConstants.UIDL_SECURITY_TOKEN_ID + "\":\""
-                + seckey + "\",";
-    }
+		return "\"" + ApplicationConstants.UIDL_SECURITY_TOKEN_ID + "\":\"" + seckey + "\",";
+	}
 
-    /**
-     * Gets the push connection identifier as UIDL.
-     *
-     * @param session
-     *            the vaadin session to which the security key belongs
-     * @return the push identifier UIDL
-     */
-    private static String getPushIdUIDL(VaadinSession session) {
-        return "\"" + ApplicationConstants.UIDL_PUSH_ID + "\":\""
-                + session.getPushId() + "\",";
-    }
+	/**
+	 * Gets the push connection identifier as UIDL.
+	 *
+	 * @param session the vaadin session to which the security key belongs
+	 * @return the push identifier UIDL
+	 */
+	private static String getPushIdUIDL(VaadinSession session) {
+		return "\"" + ApplicationConstants.UIDL_PUSH_ID + "\":\"" + session.getPushId() + "\",";
+	}
 
-    private static final Logger getLogger() {
-        return Logger.getLogger(UIInitHandler.class.getName());
-    }
+	private static final Logger getLogger() {
+		return Logger.getLogger(UIInitHandler.class.getName());
+	}
 }

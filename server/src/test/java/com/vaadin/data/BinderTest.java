@@ -40,7 +40,7 @@ import com.vaadin.shared.ui.ErrorLevel;
 import com.vaadin.tests.data.bean.Person;
 import com.vaadin.tests.data.bean.Sex;
 import com.vaadin.ui.TextField;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.CoreMatchers;
 
 public class BinderTest extends BinderTestBase<Binder<Person>, Person> {

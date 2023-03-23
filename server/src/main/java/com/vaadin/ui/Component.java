@@ -27,7 +27,6 @@ import com.vaadin.server.ClientConnector;
 import com.vaadin.server.ErrorMessage;
 import com.vaadin.server.Resource;
 import com.vaadin.server.Sizeable;
-import com.vaadin.server.VariableOwner;
 import com.vaadin.shared.Registration;
 import com.vaadin.ui.declarative.DesignContext;
 
@@ -300,7 +299,6 @@ public interface Component extends ClientConnector, Sizeable {
      *
      * @return <code>true</code> if the component and its parent are enabled,
      *         <code>false</code> otherwise.
-     * @see VariableOwner#isEnabled()
      */
     public boolean isEnabled();
 

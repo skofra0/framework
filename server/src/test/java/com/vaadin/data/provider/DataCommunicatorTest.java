@@ -65,7 +65,7 @@ public class DataCommunicatorTest {
         private Registration registration;
 
         public TestDataProvider() {
-            super(new ArrayList());
+            super(new ArrayList<>());
             addItem(TEST_OBJECT);
         }
 

@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.vaadin.event.Action.Container;
 import com.vaadin.event.Action.Handler;

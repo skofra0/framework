@@ -47,7 +47,7 @@ public class AbstractFieldTest extends EasyMockSupport {
     public void setUp() {
         field = new TextField();
         l = mockListener();
-        capture = new Capture<>();
+        capture = Capture.newInstance();
     }
 
     @Test

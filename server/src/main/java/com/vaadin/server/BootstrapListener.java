@@ -16,7 +16,6 @@
 
 package com.vaadin.server;
 
-import javax.portlet.RenderResponse;
 
 import com.vaadin.event.SerializableEventListener;
 
@@ -34,7 +33,7 @@ public interface BootstrapListener extends SerializableEventListener {
      * Lets this listener make changes to the fragment that makes up the actual
      * Vaadin application. In a typical Servlet deployment, this is the contents
      * of the HTML body tag. In a typical Portlet deployment, this is the HTML
-     * that will be returned in a {@link RenderResponse}.
+     * that will be returned in a {RenderResponse}.
      *
      * @param response
      *            the bootstrap response that can modified to cause changes in

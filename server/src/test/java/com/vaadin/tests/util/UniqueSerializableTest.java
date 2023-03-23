@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.junit.Test;
 
 import com.vaadin.ui.UniqueSerializable;

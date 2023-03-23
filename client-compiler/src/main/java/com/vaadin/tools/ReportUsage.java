@@ -164,8 +164,7 @@ public class ReportUsage {
     }
 
     private static String loadFirstLaunch() {
-        Preferences prefs = Preferences
-                .userNodeForPackage(CheckForUpdates.class);
+        Preferences prefs = Preferences.userNodeForPackage(CheckForUpdates.class);
 
         String firstLaunch = prefs.get(FIRST_LAUNCH, null);
         if (firstLaunch == null) {

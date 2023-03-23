@@ -19,7 +19,6 @@ package com.vaadin.server;
 import java.io.Serializable;
 import java.util.Set;
 
-import javax.portlet.PortletSession;
 import javax.servlet.http.HttpSession;
 
 /**

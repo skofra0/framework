@@ -11,7 +11,7 @@
     <groupId>com.vaadin</groupId>
     <artifactId>vaadin-bom</artifactId>
     <packaging>pom</packaging>
-    <version>8.15-SNAPSHOT</version>
+    <version>9.0.1</version>
     <name>Vaadin Framework (Bill of Materials)</name>
     <description>Vaadin Framework (Bill of Materials)</description>
     <url>http://vaadin.com</url>
@@ -70,6 +70,8 @@
                 <artifactId>vaadin-themes</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            
+        <!--    
             <dependency>
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-compatibility-shared</artifactId>
@@ -100,8 +102,8 @@
                 <artifactId>vaadin-testbench-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <!-- Add-on Dependencies -->
+         -->
+         <!-- Add-on Dependencies 
             <dependency>
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-spring-boot-starter</artifactId>
@@ -132,7 +134,7 @@
                 <artifactId>vaadin-context-menu</artifactId>
                 <version>${vaadin.context-menu.version}</version>
             </dependency>
-
+          -->
         </dependencies>
     </dependencyManagement>
 </project>

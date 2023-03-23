@@ -21,9 +21,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 
-import javax.portlet.MimeResponse;
-import javax.portlet.PortletResponse;
-import javax.portlet.ResourceResponse;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
