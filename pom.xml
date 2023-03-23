@@ -28,7 +28,7 @@
         <liferay.portal-kernel.version>2.0.0</liferay.portal-kernel.version>
 
         <vaadin.gwt.version>2.9.0</vaadin.gwt.version>
-        <vaadin.plugin.version>8.15-SNAPSHOT</vaadin.plugin.version>
+        <vaadin.plugin.version>8.14.3</vaadin.plugin.version>
 
         <!-- Used in OSGi manifests -->
         <javax.validation.version>2.0.1.Final</javax.validation.version>
@@ -70,27 +70,26 @@
                 <enabled>false</enabled>
             </snapshots>
         </pluginRepository>
-        <pluginRepository>
-            <id>vaadin-prereleases</id>
-            <url>https://maven.vaadin.com/vaadin-prereleases/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
     </pluginRepositories>
 
     <repositories>
  		<repository>
 			<id>DeemMaven</id>
 			<url>http://maven.deem.no:8081/repository/maven-public</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
 		</repository>
     </repositories>
+    
+   	<distributionManagement>
+		<repository>
+			<id>DeemMaven</id>
+			<url>http://maven.deem.no:8081/repository/maven-releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>DeemMaven</id>
+			<url>http://maven.deem.no:8081/repository/maven-snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 
     <organization>
         <name>Vaadin Ltd</name>
