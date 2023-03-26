@@ -642,11 +642,9 @@ public class Window extends Panel implements FocusNotifier, BlurNotifier {
      *            the WindowModeChangeListener to remove.
      */
     @Deprecated
-    public void removeWindowModeChangeListener(
-            WindowModeChangeListener listener) {
-        removeListener(WindowModeChangeEvent.class, listener,
-                WindowModeChangeListener.windowModeChangeMethod);
-    }
+	public void removeWindowModeChangeListener(WindowModeChangeListener listener) {
+		removeListener(WindowModeChangeEvent.class, listener, WindowModeChangeListener.windowModeChangeMethod);
+	}
 
     protected void fireWindowWindowModeChange() {
         fireEvent(

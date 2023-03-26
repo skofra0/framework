@@ -592,9 +592,9 @@
                 <module>compatibility-client</module>
                 <module>compatibility-client-compiled</module>
                 <module>compatibility-shared</module>
-                <module>compatibility-themes</module>
+                <module>compatibility-themes</module>  -->
                 <module>testbench-api</module>
-              -->
+             
                 <module>bom</module>
             </modules>
         </profile>

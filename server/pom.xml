@@ -155,7 +155,6 @@
                             <includeArtifactIds>vaadin-icons</includeArtifactIds>
                             <excludeTransitive>true</excludeTransitive>
                             <includes>com/vaadin/icons/VaadinIcons.java</includes>
-                            <overWrite>true</overWrite>
                             <outputDirectory>${project.build.directory}/vaadin-icons</outputDirectory>
                         </configuration>
                     </execution>
