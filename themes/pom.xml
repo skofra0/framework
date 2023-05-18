@@ -157,7 +157,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <archive>
-                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                       <!--  <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile> -->
                         <index>false</index>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>

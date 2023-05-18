@@ -10,7 +10,7 @@ package com.google.gwt.dev.shell;
  * 
  */
 
-public class CheckForUpdates {
+public class CheckForUpdatesDeem {
 
 	// NOP
 

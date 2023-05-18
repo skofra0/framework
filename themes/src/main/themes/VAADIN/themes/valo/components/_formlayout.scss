@@ -43,7 +43,8 @@
   .#{$primary-stylename}-contentcell {
     .v-checkbox,
     .v-radiobutton {
-      font-weight: $v-font-weight + 100;
+      /*  font-weight: $v-font-weight + 100; DEEM-MOD */
+      font-weight: $v-font-weight;
     }
 
     > .v-label-h2,

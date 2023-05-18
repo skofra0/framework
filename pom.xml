@@ -17,9 +17,9 @@
     </prerequisites>
 
     <properties>
-		<java.version>11</java.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+		<java.version>1.8</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -27,7 +27,8 @@
         <liferay.portal-service.version>6.2.5</liferay.portal-service.version>
         <liferay.portal-kernel.version>2.0.0</liferay.portal-kernel.version>
 
-        <vaadin.gwt.version>2.9.0</vaadin.gwt.version>
+  <!--  <vaadin.gwt.version>2.9.0</vaadin.gwt.version> -->
+        <vaadin.gwt.version>2.8.2</vaadin.gwt.version>
         <vaadin.plugin.version>8.14.3</vaadin.plugin.version>
 
         <!-- Used in OSGi manifests -->
@@ -50,7 +51,7 @@
         <!-- Dependency unpack directory -->
         <dependency.unpack.directory>${project.build.directory}/dependency-unpack</dependency.unpack.directory>
  
-        <jetty.version>10.0.14</jetty.version>
+        <jetty.version>9.4.51.v20230217</jetty.version>
 
         <!-- Sonar properties -->
         <sonar.java.source>8</sonar.java.source>
@@ -181,6 +182,11 @@
 				<version>${vaadin.gwt.version}</version>
 	   		    <scope>provided</scope> 
 	        </dependency>
+			<dependency>
+			    <groupId>com.google.code.gson</groupId>
+			    <artifactId>gson</artifactId>
+			    <version>2.10.1</version>
+			</dependency>
             <dependency>
                 <groupId>com.vaadin.external.atmosphere</groupId>
                 <artifactId>atmosphere-runtime</artifactId>
@@ -202,6 +208,11 @@
                         <groupId>org.hamcrest</groupId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.easymock</groupId>
+                <artifactId>easymock</artifactId>
+                <version>4.3</version>
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
@@ -232,11 +243,6 @@
                 <groupId>org.jsoup</groupId>
                 <artifactId>jsoup</artifactId>
                 <version>${jsoup.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.easymock</groupId>
-                <artifactId>easymock</artifactId>
-                <version>4.3</version>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
@@ -377,7 +383,7 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.11.0</version>
 					<configuration>
-						<release>${java.version}</release>
+				 <!--	<release>${java.version}</release> -->
 						<encoding>${project.build.sourceEncoding}</encoding>
 					</configuration>
                 </plugin>
@@ -400,7 +406,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.2</version>
+                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>
@@ -457,7 +463,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>3.2.1</version>
                 </plugin>
                 <plugin>
                     <groupId>com.vaadin</groupId>
@@ -479,6 +485,7 @@
                         <propertyExpansion>config_loc=${basedir}/../checkstyle</propertyExpansion>
                         <configLocation>../checkstyle/vaadin-checkstyle.xml</configLocation>
                         <headerLocation>../checkstyle/header</headerLocation>
+<!--                        <suppressionsLocation>../checkstyle/suppressions.xml</suppressionsLocation> -->
                         <encoding>UTF-8</encoding>
                         <consoleOutput>false</consoleOutput>
                         <failsOnError>false</failsOnError>
@@ -532,7 +539,6 @@
         </pluginManagement>
 
         <plugins>
-   
             <!-- Unpacked Dependencies as resource -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -592,9 +598,9 @@
                 <module>compatibility-client</module>
                 <module>compatibility-client-compiled</module>
                 <module>compatibility-shared</module>
-                <module>compatibility-themes</module>  -->
+                <module>compatibility-themes</module>
+             -->
                 <module>testbench-api</module>
-             
                 <module>bom</module>
             </modules>
         </profile>
@@ -640,6 +646,7 @@
                 <module>liferay-integration</module>
                 <module>osgi-integration</module>
                 <module>testbench-api</module> -->
+                <!-- Nexus staging bug needs the last module to be deployed. -->
                 <!-- BOM is built and released separately -->
             </modules>
 
@@ -696,7 +703,7 @@
                 <module>client-compiler</module>
                 <module>client-compiled</module>
                 <module>themes</module>
-           <!--     <module>compatibility-server</module>
+           <!-- <module>compatibility-server</module>
                 <module>compatibility-server-gae</module>
                 <module>compatibility-client</module>
                 <module>compatibility-client-compiled</module>
@@ -705,7 +712,8 @@
                 <module>liferay-integration</module>
                 <module>osgi-integration</module>
                 <module>testbench-api</module>
-               -->
+             -->
+                <!-- Nexus staging bug needs the last module to be deployed. -->
                 <!-- BOM is built and released separately -->
             </modules>
 
@@ -748,7 +756,8 @@
             </build>
         </profile>
         <profile>
-            <!-- Snapshot build only builds artifacts that are deployed or needed by them -->
+            <!-- Snapshot build only builds artifacts that are deployed or 
+                needed by them -->
             <id>snapshot</id>
             <properties>
                 <vaadin.plugin.version>${project.version}</vaadin.plugin.version>
@@ -760,7 +769,7 @@
                 <module>client</module>
                 <module>client-compiler</module>
                 <module>client-compiled</module>
-                <module>themes</module> 
+                <module>themes</module>
                 <!-- 
                 <module>compatibility-server</module>
                 <module>compatibility-server-gae</module>
@@ -770,7 +779,8 @@
                 <module>compatibility-themes</module>
                 <module>liferay-integration</module>
                 <module>osgi-integration</module>
-                <module>testbench-api</module> -->
+                <module>testbench-api</module>
+                -->
                 <module>bom</module>
             </modules>
 
@@ -796,7 +806,7 @@
                     </plugin>
                     <plugin>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.10.3</version>
+                        <version>3.5.0</version>
                         <executions>
                             <execution>
                                 <id>generate-javadoc</id>

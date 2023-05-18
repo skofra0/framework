@@ -23,8 +23,12 @@
         <vaadin.context-menu.version>3.1.0</vaadin.context-menu.version>
     </properties>
 
-    <repositories>
-        <repository>
+     <repositories>
+ 		<repository>
+			<id>DeemMaven</id>
+			<url>http://maven.deem.no:8081/repository/maven-public</url>
+		</repository>
+       <repository>
             <id>vaadin-prereleases</id>
             <url>https://maven.vaadin.com/vaadin-prereleases/</url>
             <snapshots>
@@ -32,6 +36,18 @@
             </snapshots>
         </repository>
     </repositories>
+    
+   	<distributionManagement>
+		<repository>
+			<id>DeemMaven</id>
+			<url>http://maven.deem.no:8081/repository/maven-releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>DeemMaven</id>
+			<url>http://maven.deem.no:8081/repository/maven-snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+    
 
     <dependencyManagement>
         <dependencies>

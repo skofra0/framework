@@ -27,7 +27,7 @@ import java.util.prefs.Preferences;
 
 import org.apache.commons.io.IOUtils;
 
-import com.google.gwt.dev.shell.CheckForUpdates;
+import com.google.gwt.dev.shell.CheckForUpdatesDeem;
 import com.vaadin.shared.Version;
 
 public class ReportUsage {
@@ -164,7 +164,7 @@ public class ReportUsage {
     }
 
     private static String loadFirstLaunch() {
-        Preferences prefs = Preferences.userNodeForPackage(CheckForUpdates.class);
+        Preferences prefs = Preferences.userNodeForPackage(CheckForUpdatesDeem.class);
 
         String firstLaunch = prefs.get(FIRST_LAUNCH, null);
         if (firstLaunch == null) {
