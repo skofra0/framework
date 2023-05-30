@@ -1124,8 +1124,7 @@ public abstract class VaadinService implements Serializable {
      *         <code>false</code> if a new UI instance should be initialized on
      *         refreshed.
      */
-    public boolean preserveUIOnRefresh(UIProvider provider,
-            UICreateEvent event) {
+    public boolean preserveUIOnRefresh(UIProvider provider, UICreateEvent event) {
         return provider.isPreservedOnRefresh(event);
     }
 
